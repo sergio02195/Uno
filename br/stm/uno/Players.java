@@ -27,6 +27,7 @@ class Players extends ArrayList<Player> {
     int getCurrentIndex() { return currentPlayer; }
 
     void invertOrder() {
+        System.out.println("Inverting game order");
         clockwiseMotion = !clockwiseMotion;
     }
 

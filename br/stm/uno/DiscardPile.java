@@ -37,10 +37,12 @@ class DiscardPile extends ArrayList<Card> {
     }
 
     void setLastColor(CardColor lastColor) {
+        System.out.println("Setting pile's color to " + lastColor);
         this.lastColor = lastColor;
     }
 
     void discard(Card card) {
+        System.out.println("Playing " + card);
         add(card);
         lastColor = card.getColor();
     }
