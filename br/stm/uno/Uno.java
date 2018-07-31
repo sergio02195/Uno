@@ -182,6 +182,9 @@ class Uno {
         System.out.println("Last card played: " + discardPile.getLastCard());
         System.out.println("Discard pile's current color: " + discardPile.getLastColor());
         System.out.println("Current player index: " + players.getCurrentIndex());
+        System.out.println("Action pending: " + discardPile.hasPendingAction());
+        System.out.println("Number of cards on draw pile: " + drawPile.size());
+        System.out.println("Number of cards on discard pile: " + discardPile.size());
         System.out.println("Current player's cards: " + players.getCurrentPlayer());
         System.out.println("Possible actions: " + Arrays.toString(possibleActions));
 
@@ -210,6 +213,7 @@ class Uno {
                     }
                 }
             }
+            discardPile.setPendingAction(possibleAction.contains("four"));
         } else if (possibleAction.startsWith("Buy")) {
             switch (possibleAction) {
                 case "Buy a card":
@@ -245,7 +249,6 @@ class Uno {
             discardPile.setPendingAction(false);
         } else if (possibleAction.startsWith("Skip")) {
             System.out.println("Skipping current player");
-            players.nextPlayer();
             discardPile.setPendingAction(false);
         }
     }
