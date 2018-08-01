@@ -20,6 +20,19 @@ class Uno {
         discardPile = new DiscardPile(drawPile);
     }
 
+     Uno cloneGame() {
+        Uno clone = new Uno(players.size());
+        clone.drawPile.clear();
+        clone.drawPile.addAll(drawPile);
+
+        clone.players.clear();
+        clone.players.addAll(players);
+
+        clone.totalTurns = totalTurns;
+
+        return clone;
+    }
+
     private int getWinnerIndex() {
         return IntStream.range(0, players.size()).filter(i -> players.get(i)
                 .isEmpty()).findFirst().orElse(-1);
@@ -54,7 +67,7 @@ class Uno {
     }
 
     //FIXME: Remove duplicate entries
-    private String[] getPossibleMoves(Player player) {
+    String[] getPossibleMoves(Player player) {
         ArrayList<String> possibleMoves = new ArrayList<>();
         if (discardPile.hasPendingAction()) {
             switch (discardPile.getLastCard().getType()) {
@@ -176,7 +189,7 @@ class Uno {
     }
 
 
-    private void chooseAction() {
+    void chooseAction() {
         System.out.println("-------------------------------------");
         String[] possibleActions = getPossibleMoves(players.getCurrentPlayer());
 
