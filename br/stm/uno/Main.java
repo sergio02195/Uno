@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         ArrayList<Integer> turns = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
-            Uno uno = new Uno(8);
+            Uno uno = new Uno(20);
             while (uno.nextMove()) ;
             turns.add(uno.getTotalTurns());
         }

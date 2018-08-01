@@ -5,9 +5,10 @@ import java.util.Collections;
 
 class DrawPile extends ArrayList<Card> {
 
-    DrawPile() {
-        super(Card.getDeck());
+    DrawPile(int nDecks) {
+        super(Card.getDeck(nDecks));
         Collections.shuffle(this);
+        System.out.println("We need " + nDecks + " decks");
     }
 
     ArrayList<Card> withdraw(int nCards, DiscardPile discardPile) {

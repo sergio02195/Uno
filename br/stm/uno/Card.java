@@ -84,7 +84,7 @@ public enum Card {
         return value;
     }
 
-    public static List<Card> getDeck() {
+    private static List<Card> getDeck() {
         final List<Card> deck = new ArrayList<>(Arrays.asList(R0, B0, Y0, G0, WC, WC, WC4, WC4));
         for (int i = 0; i < 2; i++) {
             for (Card c : values()) {
@@ -92,6 +92,14 @@ public enum Card {
                     deck.add(c);
                 }
             }
+        }
+        return deck;
+    }
+
+    public static List<Card> getDeck(int nDecks) {
+        List<Card> deck = new ArrayList<>();
+        for (int i = 0; i < nDecks; i++) {
+            deck.addAll(getDeck());
         }
         return deck;
     }

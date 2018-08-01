@@ -15,7 +15,7 @@ class Uno {
     private int totalTurns;
 
     Uno(int nPlayers) {
-        drawPile = new DrawPile();
+        drawPile = new DrawPile((int) Math.ceil(nPlayers / 8.0));
         players = new Players(nPlayers, drawPile);
         discardPile = new DiscardPile(drawPile);
     }
