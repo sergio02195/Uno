@@ -11,7 +11,6 @@ class DrawPile extends ArrayList<Card> {
     }
 
     ArrayList<Card> withdraw(int nCards, DiscardPile discardPile) {
-        System.out.println("Withdrawing " + nCards + " cards from the draw pile");
         if (size() <= nCards) {
             Card top = remove(size() - 1);
 
@@ -23,6 +22,7 @@ class DrawPile extends ArrayList<Card> {
 
             add(top);
         }
+        System.out.println("Withdrawing " + nCards + " cards from the draw pile");
         ArrayList<Card> cards = new ArrayList<>();
         for (int i = 0; i < nCards; i++)
             // Withdrawing cards from the "top" of the pile

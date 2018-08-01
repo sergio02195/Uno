@@ -275,4 +275,7 @@ class Uno {
         }
     }
 
+    public int getTotalTurns() {
+        return totalTurns;
+    }
 }
