@@ -31,7 +31,8 @@ class Uno {
         int buyFourIndex = -1;
         for (int i = 0; i < player.size(); i++) {
             Card c = player.get(i);
-            buyFourIndex = c.getType().equals(CardType.WILDCARD_BUY_FOUR) ? i : -1;
+            if (buyFourIndex == -1)
+                buyFourIndex = c.getType().equals(CardType.WILDCARD_BUY_FOUR) ? i : -1;
             boolean sameColor = Objects.equals(c.getColor(), testColor);
             if (sameColor) {
                 colorMatch = matches.add(i);
