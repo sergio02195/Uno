@@ -190,6 +190,7 @@ class Uno {
 
         // For now it chooses a random action
         doAction(possibleActions[ThreadLocalRandom.current().nextInt(possibleActions.length)]);
+        totalTurns++;
 
     }
 
@@ -228,10 +229,14 @@ class Uno {
                     discardPile.setPendingAction(false);
                     break;
                 default:
-                    discardPile.discard(drawPile.withdraw(1, discardPile).get(0));
+                    Card chosen = drawPile.withdraw(1, discardPile).get(0);
+                    discardPile.discard(chosen);
                     if (possibleAction.contains("choose")) {
                         String chosenColor = possibleAction.split("choose")[1].trim();
                         discardPile.setLastColor(CardColor.getByName(chosenColor));
+                    } else {
+                        // Invert, skip and buy two trigger the "pending action" boolean for the next player
+                        discardPile.setPendingAction(chosen.getValue() == 20);
                     }
                     break;
             }
@@ -264,7 +269,7 @@ class Uno {
             players.nextPlayer();
             return true;
         } else {
-            System.out.println("Game over, player " + winnerIndex + " won");
+            System.out.println("Game over, player " + winnerIndex + " won in " + totalTurns + " turns");
             return false;
         }
     }
