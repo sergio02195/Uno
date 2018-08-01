@@ -239,10 +239,14 @@ class Uno {
             int cardIndex = Integer.parseInt(possibleAction.replaceAll("\\D+", ""));
             Card chosen = players.getCurrentPlayer().remove(cardIndex);
             discardPile.discard(chosen);
+
             if (possibleAction.contains("choose")) {
                 String chosenColor = possibleAction.split("choose")[1].trim();
                 discardPile.setLastColor(CardColor.getByName(chosenColor));
                 discardPile.setPendingAction(possibleAction.contains("four"));
+            } else {
+                // Invert, skip and buy two trigger the "pending action" boolean for the next player
+                discardPile.setPendingAction(chosen.getValue() == 20);
             }
         } else if (possibleAction.startsWith("Invert")) {
             players.invertOrder();

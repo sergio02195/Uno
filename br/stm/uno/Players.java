@@ -11,7 +11,7 @@ class Players extends ArrayList<Player> {
     Players(int nPlayers, DrawPile drawPile) {
         this.nPlayers = nPlayers;
         currentPlayer = 0;
-        clockwiseMotion = false;
+        clockwiseMotion = true;
 
         for (int i = 0; i < nPlayers; i++) {
             Player player = new Player();
