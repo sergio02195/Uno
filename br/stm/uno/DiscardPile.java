@@ -6,9 +6,11 @@ class DiscardPile extends ArrayList<Card> {
 
     private boolean pendingAction;
     private CardColor lastColor;
+    private boolean silentMode;
 
-    DiscardPile(DrawPile drawPile) {
+    DiscardPile(DrawPile drawPile,boolean silentMode) {
         Card firstCard;
+        this.silentMode = silentMode;
         // First card can't be a buy-four. If it is a buy-four
         // we put it at the bottom of the draw pile and pick
         // another one.
@@ -18,6 +20,10 @@ class DiscardPile extends ArrayList<Card> {
 //        firstCard = Card.WC;
         discard(firstCard);
         pendingAction = !firstCard.getType().equals(CardType.NUMBER);
+    }
+
+    private void Print(String text){
+        if(!silentMode) System.out.println(text);
     }
 
     boolean hasPendingAction() {
@@ -37,12 +43,12 @@ class DiscardPile extends ArrayList<Card> {
     }
 
     void setLastColor(CardColor lastColor) {
-        System.out.println("Setting pile's color to " + lastColor);
+        Print("Setting pile's color to " + lastColor);
         this.lastColor = lastColor;
     }
 
     void discard(Card card) {
-        System.out.println("Playing " + card);
+        Print("Playing " + card);
         add(card);
         lastColor = card.getColor();
     }

@@ -5,10 +5,17 @@ import java.util.Collections;
 
 class DrawPile extends ArrayList<Card> {
 
-    DrawPile(int nDecks) {
+    private boolean silentMode;
+    
+    DrawPile(int nDecks,boolean silentMode) {
         super(Card.getDeck(nDecks));
+        this.silentMode = silentMode;
         Collections.shuffle(this);
-        System.out.println("We need " + nDecks + " decks");
+        Print("We need " + nDecks + " decks");
+    }
+    
+    private void Print(String text){
+        if(!silentMode) System.out.println(text);
     }
 
     ArrayList<Card> withdraw(int nCards, DiscardPile discardPile) {
@@ -17,13 +24,13 @@ class DrawPile extends ArrayList<Card> {
 
             for (int i = 0; i < discardPile.size() - 1; i++)
                 add(discardPile.remove(0));
-            System.out.println("Draw pile refilled with discard pile");
+            Print("Draw pile refilled with discard pile");
 
             Collections.shuffle(this);
 
             add(top);
         }
-        System.out.println("Withdrawing " + nCards + " cards from the draw pile");
+        Print("Withdrawing " + nCards + " cards from the draw pile");
         ArrayList<Card> cards = new ArrayList<>();
         for (int i = 0; i < nCards; i++)
             // Withdrawing cards from the "top" of the pile

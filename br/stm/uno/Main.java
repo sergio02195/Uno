@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         ArrayList<Integer> turns = new ArrayList<>();
         for (int i = 0; i < 1; i++) {
-            Uno uno = new Uno(2);
+            Uno uno = new Uno(2, true);
             while (uno.nextMove()) ;
             turns.add(uno.getTotalTurns());
             Uno clone = uno.cloneGame();

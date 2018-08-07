@@ -11,17 +11,19 @@ class Uno {
     private Players players;
     private DrawPile drawPile;
     private DiscardPile discardPile;
+    private boolean silentMode;
 
     private int totalTurns;
 
-    Uno(int nPlayers) {
-        drawPile = new DrawPile((int) Math.ceil(nPlayers / 8.0));
-        players = new Players(nPlayers, drawPile);
-        discardPile = new DiscardPile(drawPile);
+    Uno(int nPlayers,boolean silentMode) {
+        this.silentMode = silentMode;
+        drawPile = new DrawPile((int) Math.ceil(nPlayers / 8.0),silentMode);
+        players = new Players(nPlayers, drawPile,silentMode);
+        discardPile = new DiscardPile(drawPile,silentMode);
     }
 
      Uno cloneGame() {
-        Uno clone = new Uno(players.size());
+        Uno clone = new Uno(players.size(), true);
         clone.drawPile.clear();
         clone.drawPile.addAll(drawPile);
 
@@ -188,19 +190,22 @@ class Uno {
         return possibleMoves.toArray(new String[0]);
     }
 
+    private void Print(String text){
+        if(!silentMode) System.out.println(text);
+    }
 
     void chooseAction() {
-        System.out.println("-------------------------------------");
+        Print("-------------------------------------");
         String[] possibleActions = getPossibleMoves(players.getCurrentPlayer());
 
-        System.out.println("Last card played: " + discardPile.getLastCard());
-        System.out.println("Discard pile's current color: " + discardPile.getLastColor());
-        System.out.println("Current player index: " + players.getCurrentIndex());
-        System.out.println("Action pending: " + discardPile.hasPendingAction());
-        System.out.println("Number of cards on draw pile: " + drawPile.size());
-        System.out.println("Number of cards on discard pile: " + discardPile.size());
-        System.out.println("Current player's cards: " + players.getCurrentPlayer());
-        System.out.println("Possible actions: " + Arrays.toString(possibleActions));
+        Print("Last card played: " + discardPile.getLastCard());
+        Print("Discard pile's current color: " + discardPile.getLastColor());
+        Print("Current player index: " + players.getCurrentIndex());
+        Print("Action pending: " + discardPile.hasPendingAction());
+        Print("Number of cards on draw pile: " + drawPile.size());
+        Print("Number of cards on discard pile: " + discardPile.size());
+        Print("Current player's cards: " + players.getCurrentPlayer());
+        Print("Possible actions: " + Arrays.toString(possibleActions));
 
         // For now it chooses a random action
         doAction(possibleActions[ThreadLocalRandom.current().nextInt(possibleActions.length)]);
@@ -271,7 +276,7 @@ class Uno {
             players.invertOrder();
             discardPile.setPendingAction(false);
         } else if (possibleAction.startsWith("Skip")) {
-            System.out.println("Skipping current player");
+            Print("Skipping current player");
             discardPile.setPendingAction(false);
         }
     }
