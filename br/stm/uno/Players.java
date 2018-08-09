@@ -5,7 +5,7 @@ import java.util.ArrayList;
 class Players extends ArrayList<Player> {
 
     private int nPlayers;
-    private int currentPlayer;
+    int currentPlayer;
     private boolean clockwiseMotion;
     private boolean silentMode;
 

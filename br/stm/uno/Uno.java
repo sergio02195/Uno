@@ -1,8 +1,6 @@
 package br.stm.uno;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
@@ -27,10 +25,19 @@ class Uno {
         clone.drawPile.clear();
         clone.drawPile.addAll(drawPile);
 
+        clone.discardPile.clear();
+        clone.discardPile.addAll(discardPile);
+
         clone.players.clear();
-        clone.players.addAll(players);
+        //clone.players.addAll(players);
+         for (Player p : players){
+             Player a = new Player();
+             a.addAll(p);
+             clone.players.add(a);
+         }
 
         clone.totalTurns = totalTurns;
+        clone.players.currentPlayer = players.getCurrentIndex();
 
         return clone;
     }
@@ -208,9 +215,65 @@ class Uno {
         Print("Possible actions: " + Arrays.toString(possibleActions));
 
         // For now it chooses a random action
-        doAction(possibleActions[ThreadLocalRandom.current().nextInt(possibleActions.length)]);
+        String escolha;
+        if(players.getCurrentIndex() == 0) {
+            escolha = possibleActions[ThreadLocalRandom.current().nextInt(possibleActions.length)];
+        }else {
+            var decisao = minimax(this.cloneGame(), 0);
+            if(decisao.y == -1)
+                escolha = possibleActions[ThreadLocalRandom.current().nextInt(possibleActions.length)];
+            else
+                escolha = decisao.x;
+        }
+        doAction(escolha);
         totalTurns++;
 
+    }
+
+    private Tuple<String, Integer> minimax(Uno uno, int depth){
+        // verificar estado do jogo e retornar euristica da folha
+        int winner = uno.getWinnerIndex();
+        if(winner != -1){
+            switch(winner){
+                case 0:
+                    return new Tuple<>("", 1000-depth);
+                case 1:
+                    return new Tuple<>("", depth-1000);
+            }
+        }
+        // testar cada jogada recursivamente
+        depth++;
+        if (depth > 10) return new Tuple<>("", depth-1000);
+
+        List<Tuple<String, Integer>> resultados = new ArrayList<>();
+        for (String jogada : uno.getPossibleMoves(uno.players.getCurrentPlayer()) ){
+            Uno jogoPossivel = uno.cloneGame();
+            jogoPossivel.doAction(jogada);
+            totalTurns++;
+            int winner2 = jogoPossivel.getWinnerIndex();
+            if(winner2 != -1){
+                switch(winner2){
+                    case 0:
+                        //resultados.add(new Tuple<>(jogada, 1000-depth));
+                        return new Tuple<>(jogada, 1000-depth);
+                    case 1:
+                        //resultados.add(new Tuple<>(jogada, depth-1000));
+                        return new Tuple<>(jogada, depth-1000);
+                }
+            }
+            else {
+                jogoPossivel.players.nextPlayer();
+
+                // adicionar jogada juntamente com sua euristica
+                resultados.add(new Tuple<>(jogada, minimax(jogoPossivel, depth).y));
+            }
+        }
+        // retornar a melhor jogada dependendo do jogador
+        if(uno.players.getCurrentIndex() == 0){
+            return resultados.stream().max(Comparator.comparing(i -> i.y)).orElse(new Tuple<>("",-1));
+        }else{
+            return resultados.stream().min(Comparator.comparing(i -> i.y)).orElse(new Tuple<>("",-1));
+        }
     }
 
     private void doAction(String possibleAction) {
