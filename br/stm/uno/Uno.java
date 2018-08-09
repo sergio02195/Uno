@@ -1,5 +1,7 @@
 package br.stm.uno;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
@@ -219,7 +221,16 @@ class Uno {
         if(players.getCurrentIndex() == 0) {
             escolha = possibleActions[ThreadLocalRandom.current().nextInt(possibleActions.length)];
         }else {
-            var decisao = minimax(this.cloneGame(), 0);
+            long tempoInicial = System.currentTimeMillis();
+            //var decisao = minimax(this.cloneGame(), 0);
+            //System.out.println("minimax tempo : " + (System.currentTimeMillis() - tempoInicial)+" ms");
+
+            var decisao = alfaBeta(this.cloneGame(), 0, -Integer.MAX_VALUE,Integer.MAX_VALUE);
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            Date today = Calendar.getInstance().getTime();
+
+            System.out.println(df.format(today)+": alfaBeta tempo : " + (System.currentTimeMillis() - tempoInicial)+" ms, decisao : "+decisao.x);
+
             if(decisao.y == -1)
                 escolha = possibleActions[ThreadLocalRandom.current().nextInt(possibleActions.length)];
             else
@@ -228,6 +239,57 @@ class Uno {
         doAction(escolha);
         totalTurns++;
 
+    }
+
+    private Tuple<String, Integer> alfaBeta(Uno uno, int depth, int alfa, int beta){
+        // verificar estado do jogo e retornar euristica da folha
+        int winner = uno.getWinnerIndex();
+        if(winner != -1){
+            switch(winner){
+                case 0:
+                    return new Tuple<>("", 1000-depth);
+                case 1:
+                    return new Tuple<>("", depth-1000);
+            }
+        }
+        // testar cada jogada recursivamente
+        depth++;
+        //limitador de profundidade
+        if (depth > 10) return new Tuple<>("", depth-1000);
+
+        if(uno.players.getCurrentIndex() == 0){
+            //human
+            Tuple<String, Integer> melhorJogada = new Tuple<>("",Integer.MAX_VALUE);
+            for(String jogada : uno.getPossibleMoves(uno.players.getCurrentPlayer())){
+                Uno jogoPossivel = uno.cloneGame();
+                jogoPossivel.doAction(jogada);
+                totalTurns++;
+
+                Tuple<String, Integer> valor = alfaBeta(jogoPossivel, depth, alfa, beta);
+                melhorJogada = valor.y < melhorJogada.y ? new Tuple<>(jogada, valor.y) : melhorJogada ;
+
+                beta = Math.min(beta, melhorJogada.y);
+                if(beta <= alfa)
+                    break;
+            }
+            return melhorJogada;
+        }else{
+            //!human
+            Tuple<String, Integer> melhorJogada = new Tuple<>("",-Integer.MAX_VALUE);
+            for(String jogada : uno.getPossibleMoves(uno.players.getCurrentPlayer())){
+                Uno jogoPossivel = uno.cloneGame();
+                jogoPossivel.doAction(jogada);
+                totalTurns++;
+
+                Tuple<String, Integer> valor = alfaBeta(jogoPossivel, depth, alfa, beta);
+                melhorJogada = valor.y > melhorJogada.y ? new Tuple<>(jogada, valor.y) : melhorJogada ;
+
+                alfa = Math.max(alfa, melhorJogada.y);
+                if(beta <= alfa)
+                    break;
+            }
+            return melhorJogada;
+        }
     }
 
     private Tuple<String, Integer> minimax(Uno uno, int depth){
@@ -243,6 +305,7 @@ class Uno {
         }
         // testar cada jogada recursivamente
         depth++;
+        //limitador de profundidade
         if (depth > 10) return new Tuple<>("", depth-1000);
 
         List<Tuple<String, Integer>> resultados = new ArrayList<>();
